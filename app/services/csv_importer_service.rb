@@ -241,10 +241,13 @@ class CsvImporterService
   def parse_date(value)
     return nil if value.blank?
 
-    Date.strptime(value.strip, "%d/%m/%Y").to_time
+    # :utc, not the (default) system-local zone -- otherwise a BST/system-offset
+    # midnight gets stored as the previous day once converted to the app's UTC
+    # timestamps, e.g. 23/06/2026 silently becoming 2026-06-22.
+    Date.strptime(value.strip, "%d/%m/%Y").to_time(:utc)
   rescue ArgumentError, TypeError
     begin
-      Date.parse(value.strip).to_time
+      Date.parse(value.strip).to_time(:utc)
     rescue ArgumentError, TypeError
       nil
     end
