@@ -1,0 +1,62 @@
+<%= form_with url: root_path, method: :get, class: "mb-6 space-y-3 rounded-lg border border-slate-200 bg-white p-4" do %>
+  <div>
+    <label class="block text-xs font-medium text-slate-500 mb-1">Search</label>
+    <input type="search" name="q" value="<%= filters[:q] %>"
+           placeholder="Search name, company, title, email, phone, LinkedIn, website, location, notes, source&hellip;"
+           class="w-full rounded-md border border-slate-300 text-sm px-3 py-1.5">
+  </div>
+
+  <div class="flex flex-wrap items-end gap-4">
+    <div>
+      <label class="block text-xs font-medium text-slate-500 mb-1">Priority</label>
+      <select name="priority" class="rounded-md border border-slate-300 text-sm px-2 py-1.5">
+        <option value="">All</option>
+        <option value="green" <%= "selected" if filters[:priority] == "green" %>>High</option>
+        <option value="amber" <%= "selected" if filters[:priority] == "amber" %>>Medium</option>
+        <option value="red" <%= "selected" if filters[:priority] == "red" %>>Low</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-xs font-medium text-slate-500 mb-1">LinkedIn Outreached</label>
+      <select name="linkedin_outreached" class="rounded-md border border-slate-300 text-sm px-2 py-1.5">
+        <option value="">Any</option>
+        <option value="yes" <%= "selected" if filters[:linkedin_outreached] == "yes" %>>Outreached</option>
+        <option value="no" <%= "selected" if filters[:linkedin_outreached] == "no" %>>Not yet</option>
+      </select>
+    </div>
+
+    <div class="flex items-center gap-2 pb-2">
+      <input type="checkbox" name="overdue" value="1" id="filter_overdue" <%= "checked" if filters[:overdue].present? %>
+             class="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-500">
+      <label for="filter_overdue" class="text-sm text-slate-600">Overdue for follow-up</label>
+    </div>
+
+    <div>
+      <label class="block text-xs font-medium text-slate-500 mb-1">Last Contacted From</label>
+      <input type="date" name="contacted_from" value="<%= filters[:contacted_from] %>"
+             class="rounded-md border border-slate-300 text-sm px-2 py-1.5">
+    </div>
+
+    <div>
+      <label class="block text-xs font-medium text-slate-500 mb-1">Last Contacted To</label>
+      <input type="date" name="contacted_to" value="<%= filters[:contacted_to] %>"
+             class="rounded-md border border-slate-300 text-sm px-2 py-1.5">
+    </div>
+
+    <div>
+      <label class="block text-xs font-medium text-slate-500 mb-1">Status</label>
+      <select name="status" class="rounded-md border border-slate-300 text-sm px-2 py-1.5">
+        <option value="active" <%= "selected" unless filters[:status] == "archived" %>>Active</option>
+        <option value="archived" <%= "selected" if filters[:status] == "archived" %>>Archived</option>
+      </select>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <%= submit_tag "Apply", class: "rounded-md bg-slate-900 px-3 py-1.5 text-sm font-semibold text-white hover:bg-slate-700 cursor-pointer" %>
+      <% if filters.values.any?(&:present?) %>
+        <%= link_to "Clear", root_path, class: "text-sm text-slate-500 hover:underline" %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

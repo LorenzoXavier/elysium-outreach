@@ -1,10 +1,10 @@
 <%
-  badge_classes = {
-    "green" => "bg-emerald-100 text-emerald-800",
-    "amber" => "bg-amber-100 text-amber-800",
-    "red"   => "bg-red-100 text-red-800"
+  color_classes = {
+    "green" => "text-emerald-600",
+    "amber" => "text-amber-600",
+    "red"   => "text-red-600"
   }
 %>
-<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold <%= badge_classes[contact.priority_status] %>">
-  <%= contact.priority_status.capitalize %>
+<span class="text-xs font-semibold <%= color_classes[contact.priority_status] %>">
+  Priority: <%= contact.priority_label %>
 </span>

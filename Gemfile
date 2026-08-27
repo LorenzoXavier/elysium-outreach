@@ -43,6 +43,9 @@ gem "image_processing", "~> 1.2"
 # CSV parsing for outreach data imports
 gem "csv"
 
+# Pagination for contact list views
+gem "pagy"
+
 group :development, :test do
   # Loads SMTP and other config from a local .env file
   gem "dotenv-rails"
