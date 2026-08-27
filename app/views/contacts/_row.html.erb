@@ -49,9 +49,9 @@
       <%= render "contacts/priority_toggle", contact: contact %>
 
       <% if contact.linkedin_outreached_at.blank? %>
-        <%= link_to "Mark LinkedIn Outreached", mark_linkedin_outreached_contact_path(contact),
-              data: { turbo_method: :patch, turbo_confirm: "Mark #{contact.display_name} as LinkedIn outreached? This records today's date and sets the email follow-up due in 1 week." },
-              class: "rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700" %>
+        <%= link_to "Draft LinkedIn Message", new_linkedin_message_contact_path(contact),
+              data: { turbo_frame: "modal" },
+              class: "shrink-0 whitespace-nowrap rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700" %>
       <% end %>
 
       <%= link_to "Edit Email", edit_email_contact_path(contact),

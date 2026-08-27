@@ -90,8 +90,29 @@ class Contact < ApplicationRecord
     end
   end
 
-  def mark_linkedin_outreached!
-    update!(linkedin_outreached_at: Time.current, email_followup_due_at: 1.week.from_now)
+  # Authoritative "has LinkedIn outreach happened" marker -- linkedin_message
+  # just holds the drafted/sent text, this timestamp is what the rest of the
+  # app (overdue calculations, dashboard filters, the modal trigger) checks.
+  def linkedin_outreached?
+    linkedin_outreached_at.present?
+  end
+
+  def mark_linkedin_outreached!(message: nil)
+    attributes = { linkedin_outreached_at: Time.current, email_followup_due_at: 1.week.from_now }
+    attributes[:linkedin_message] = message if message.present?
+    update!(attributes)
+  end
+
+  # Pre-fills the "Draft LinkedIn Message" modal's editable prompt textarea.
+  def default_linkedin_prompt
+    who = first_name.presence || display_name
+    where_they_work = company.present? ? " at #{company}" : " at their company"
+    notes_line = notes.present? ? "\nInclude relevant context from these notes: '#{notes}'" : ""
+
+    <<~PROMPT.strip
+      Write a brief, personalized LinkedIn connection message for #{who} who works#{where_they_work}.
+      Base tone and structure on: 'Hi #{who}, love what you're doing#{where_they_work} - navigating that level of complexity is super impressive. It would be great to connect!'#{notes_line}
+    PROMPT
   end
 
   private

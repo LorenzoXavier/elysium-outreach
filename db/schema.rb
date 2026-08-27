@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_27_142857) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_27_150739) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -27,6 +27,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_27_142857) do
     t.string "full_name"
     t.string "import_batch_id"
     t.string "last_name"
+    t.text "linkedin_message"
     t.datetime "linkedin_outreached_at"
     t.string "linkedin_url"
     t.string "location"

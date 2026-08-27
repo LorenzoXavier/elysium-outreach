@@ -125,6 +125,45 @@ class ContactsController < ApplicationController
     end
   end
 
+  # Opens the "Draft LinkedIn Message" modal (loaded into the layout's
+  # #modal turbo-frame). Only reachable when the contact hasn't been
+  # outreached yet -- see the trigger button's conditional in the views.
+  # layout: false -- this is only ever fetched via a turbo-frame request, and
+  # rendering it inside the full layout would put two id="modal" elements in
+  # one response (this one, plus the layout's own empty placeholder).
+  def new_linkedin_message
+    @linkedin_prompt = @contact.default_linkedin_prompt
+    render layout: false
+  end
+
+  # AI Assistant "Generate with Gemini": renders into a preview area only --
+  # never touches the editable message textarea directly. The user must
+  # click "Apply Suggestion" (client-side, see linkedin_message_controller.js)
+  # to copy it across.
+  def generate_linkedin_message
+    result = GeminiLinkedinMessageService.new(prompt: params[:prompt]).call
+
+    render turbo_stream: turbo_stream.replace(
+      "linkedin_message_preview",
+      partial: "contacts/linkedin_message_preview",
+      locals: { result: result }
+    )
+  end
+
+  # Saves whatever is currently in the editable message textarea (default
+  # template text, an applied AI suggestion, or a free-hand edit -- the
+  # server doesn't care which) and marks LinkedIn outreach complete in the
+  # same stroke, matching the plain "Mark LinkedIn Outreached" action's
+  # side effects (follow-up due date, etc).
+  def save_linkedin_message
+    @contact.mark_linkedin_outreached!(message: params[:linkedin_message])
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to @contact, notice: "LinkedIn outreach recorded for #{@contact.display_name}." }
+    end
+  end
+
   private
 
   def set_contact
