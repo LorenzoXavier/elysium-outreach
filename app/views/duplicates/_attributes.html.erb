@@ -1,0 +1,18 @@
+<dl class="text-sm space-y-1.5">
+  <div class="flex gap-2"><dt class="w-24 shrink-0 text-slate-500">Name</dt><dd class="font-medium text-slate-900"><%= contact.display_name %></dd></div>
+  <div class="flex gap-2"><dt class="w-24 shrink-0 text-slate-500">Company</dt><dd><%= contact.company.presence || "—" %></dd></div>
+  <div class="flex gap-2"><dt class="w-24 shrink-0 text-slate-500">Title</dt><dd><%= contact.title.presence || "—" %></dd></div>
+  <div class="flex gap-2"><dt class="w-24 shrink-0 text-slate-500">Email</dt><dd><%= contact.email.presence || "—" %></dd></div>
+  <div class="flex gap-2"><dt class="w-24 shrink-0 text-slate-500">Phone</dt><dd><%= contact.phone.presence || "—" %></dd></div>
+  <div class="flex gap-2">
+    <dt class="w-24 shrink-0 text-slate-500">LinkedIn</dt>
+    <dd class="truncate">
+      <% if contact.linkedin_url.present? %>
+        <%= link_to contact.linkedin_url, contact.linkedin_url, target: "_blank", rel: "noopener", class: "text-blue-600 hover:underline" %>
+      <% else %>
+        —
+      <% end %>
+    </dd>
+  </div>
+  <div class="flex gap-2"><dt class="w-24 shrink-0 text-slate-500">Priority</dt><dd><%= render "contacts/priority_badge", contact: contact %></dd></div>
+</dl>

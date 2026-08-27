@@ -1,0 +1,19 @@
+<% content_for :title, "Needs Action" %>
+
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-slate-900">Needs Action</h1>
+    <p class="text-sm text-slate-500 mt-1">Unique green &amp; amber leads in the active outreach pipeline.</p>
+  </div>
+  <span class="text-sm text-slate-500"><%= pluralize(@contacts.size, "contact") %></span>
+</div>
+
+<% if @contacts.any? %>
+  <div class="space-y-3">
+    <%= render partial: "contacts/row", collection: @contacts, as: :contact %>
+  </div>
+<% else %>
+  <div class="rounded-lg border border-dashed border-slate-300 p-10 text-center text-slate-500">
+    Nothing needs action right now. <%= link_to "Upload a CSV", new_import_path, class: "text-blue-600 hover:underline" %> to add leads.
+  </div>
+<% end %>

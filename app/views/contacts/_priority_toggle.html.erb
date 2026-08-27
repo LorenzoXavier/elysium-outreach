@@ -1,0 +1,9 @@
+<div class="inline-flex rounded-md border border-slate-200 overflow-hidden text-xs font-medium">
+  <% [["green", "Green", "hover:bg-emerald-50"], ["amber", "Amber", "hover:bg-amber-50"], ["red", "Red", "hover:bg-red-50"]].each do |value, label, hover| %>
+    <%= button_to update_priority_contact_path(contact, priority_status: value),
+          method: :patch,
+          class: "px-2.5 py-1 #{hover} #{'font-bold underline' if contact.priority_status == value} #{'border-l border-slate-200' unless value == 'green'}" do %>
+      <%= label %>
+    <% end %>
+  <% end %>
+</div>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Outreach" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Outreach">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-slate-50 text-slate-900">
+    <header class="bg-white border-b border-slate-200">
+      <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <%= link_to root_path, class: "text-lg font-semibold tracking-tight" do %>
+          Elysium Outreach
+        <% end %>
+        <nav class="flex items-center gap-6 text-sm font-medium text-slate-600">
+          <%= link_to "Needs Action", root_path, class: "hover:text-slate-900 #{'text-slate-900' if current_page?(root_path)}" %>
+          <%= link_to "Potential Duplicates", duplicates_path, class: "hover:text-slate-900 #{'text-slate-900' if current_page?(duplicates_path)}" %>
+          <%= link_to "Archive", archive_path, class: "hover:text-slate-900 #{'text-slate-900' if current_page?(archive_path)}" %>
+          <%= link_to "Upload CSV", new_import_path, class: "inline-flex items-center rounded-md bg-slate-900 px-3 py-2 text-white hover:bg-slate-700" %>
+        </nav>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-8">
+      <%= render "shared/flashes" %>
+      <%= yield %>
+    </main>
+  </body>
+</html>

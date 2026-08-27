@@ -1,0 +1,45 @@
+<% content_for :title, "Potential Duplicates" %>
+
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-slate-900">Potential Duplicates</h1>
+    <p class="text-sm text-slate-500 mt-1">Imported rows that matched an existing contact on email, LinkedIn URL, or name + company.</p>
+  </div>
+  <span class="text-sm text-slate-500"><%= pluralize(@duplicates.size, "pair") %></span>
+</div>
+
+<% if @duplicates.any? %>
+  <div class="space-y-6">
+    <% @duplicates.each do |dup| %>
+      <% existing = dup.matched_contact %>
+      <div class="bg-white border border-slate-200 rounded-lg overflow-hidden">
+        <div class="grid grid-cols-2 divide-x divide-slate-200">
+          <div class="p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-amber-600 mb-2">Incoming (imported row)</p>
+            <%= render "duplicates/attributes", contact: dup %>
+          </div>
+          <div class="p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">Existing contact</p>
+            <% if existing %>
+              <%= render "duplicates/attributes", contact: existing %>
+            <% else %>
+              <p class="text-sm text-slate-400 italic">Matched contact no longer exists.</p>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="bg-slate-50 border-t border-slate-200 px-4 py-3 flex items-center justify-end gap-3">
+          <%= button_to "Mark as Unique", mark_unique_duplicate_path(dup), method: :post,
+                class: "rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50" %>
+          <%= button_to "Confirm Duplicate", confirm_duplicate_path(dup), method: :post,
+                class: "rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-500",
+                data: { turbo_confirm: "Discard this imported row as a duplicate of #{existing&.display_name}?" } %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="rounded-lg border border-dashed border-slate-300 p-10 text-center text-slate-500">
+    No potential duplicates to review.
+  </div>
+<% end %>
