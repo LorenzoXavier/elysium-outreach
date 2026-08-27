@@ -33,7 +33,7 @@ class ContactsController < ApplicationController
 
   def update_priority
     @contact.update!(priority_status: params.require(:priority_status))
-    redirect_back fallback_location: root_path, notice: "Priority updated to #{@contact.priority_status.capitalize}."
+    redirect_back fallback_location: root_path, notice: "Priority updated to #{@contact.priority_label}."
   end
 
   def mark_linkedin_outreached
@@ -67,7 +67,7 @@ class ContactsController < ApplicationController
 
     @contact.update!(email_body: params.dig(:contact, :email_body) || @contact.email_body)
     OutreachMailer.outreach_email(@contact).deliver_later
-    @contact.update!(email_status: :sent)
+    @contact.update!(email_status: :sent, email_sent_at: Time.current)
 
     redirect_to root_path, notice: "Email sent to #{@contact.display_name}."
   end

@@ -35,7 +35,9 @@
       <p class="mt-2 text-xs text-slate-500">
         <% if contact.linkedin_outreached_at.present? %>
           LinkedIn outreached <%= time_ago_in_words(contact.linkedin_outreached_at) %> ago
-          &middot; follow-up due <%= contact.email_followup_due_at&.to_date&.to_fs(:long) %>
+          <% if contact.followup_status_text.present? %>
+            &middot; <%= contact.followup_status_text %>
+          <% end %>
         <% else %>
           Not yet contacted on LinkedIn
         <% end %>

@@ -24,7 +24,7 @@ class ScheduledEmail < ApplicationRecord
 
     OutreachMailer.scheduled_email(self).deliver_now
     update!(status: :sent, sent_at: Time.current)
-    contact.update!(email_status: :sent, email_body: body)
+    contact.update!(email_status: :sent, email_body: body, email_sent_at: sent_at)
   rescue StandardError => e
     update!(status: :failed, error_message: e.message)
   end

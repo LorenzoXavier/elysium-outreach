@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_27_113812) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_27_142857) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -21,6 +21,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_27_113812) do
     t.string "email"
     t.text "email_body"
     t.datetime "email_followup_due_at"
+    t.datetime "email_sent_at"
     t.string "email_status", default: "pending", null: false
     t.string "first_name"
     t.string "full_name"

@@ -35,7 +35,7 @@ class CsvImporterService
     "viable_lead_and_reason" => :viability_note,
     "step_1_connected_on_linkedin_y_n" => :linkedin_connected,
     "date_connected" => :linkedin_connected_date,
-    "step_2_message_sent_y_n" => :message_sent,
+    "step_2_message_sent_y_n" => :message_sent, "step_2_email_sent_y_n" => :message_sent,
     "date_message_sent" => :message_sent_date,
     "replied_y_n" => :replied,
     "notes_next_step" => :extra_notes
@@ -138,27 +138,37 @@ class CsvImporterService
     replied = truthy?(attributes.delete(:replied))
     extra_notes = attributes.delete(:extra_notes)
 
-    attributes[:notes] =
-      build_notes(attributes[:notes], viability_reason, extra_notes, message_sent, message_sent_date, replied)
+    attributes[:notes] = build_notes(attributes[:notes], viability_reason, extra_notes, replied)
 
     match = find_match(attributes)
     linkedin_outreached_at = linkedin_connected_date if linkedin_connected
 
-    Contact.new(
-      attributes.merge(
-        import_batch_id: @import_batch_id,
-        priority_status: explicit_priority || viability_priority || "amber",
-        duplicate_status: match ? "potential_duplicate" : "unique",
-        matched_contact: match,
-        linkedin_outreached_at: linkedin_outreached_at,
-        email_followup_due_at: (linkedin_outreached_at + 1.week if linkedin_outreached_at)
-      )
+    base_attributes = attributes.merge(
+      import_batch_id: @import_batch_id,
+      priority_status: explicit_priority || viability_priority || "amber",
+      duplicate_status: match ? "potential_duplicate" : "unique",
+      matched_contact: match,
+      linkedin_outreached_at: linkedin_outreached_at,
+      email_followup_due_at: (linkedin_outreached_at + 1.week if linkedin_outreached_at)
     )
+
+    # "Step 2: Message Sent? (Y/N)" means an email was already sent, not just a
+    # LinkedIn message -- so it must flip email_status, or the follow-up-overdue
+    # check (which requires email NOT sent) wrongly flags these as overdue. The
+    # "Date Message Sent" column, when present, becomes the actual sent date; Y
+    # with no date still counts as sent, just with an unknown timestamp. Only set
+    # these keys at all when message_sent is true -- explicitly assigning nil
+    # would override Contact's own "pending" default for every other row.
+    if message_sent
+      base_attributes[:email_status] = "sent"
+      base_attributes[:email_sent_at] = message_sent_date
+    end
+
+    Contact.new(base_attributes)
   end
 
-  def build_notes(existing_notes, viability_reason, extra_notes, message_sent, message_sent_date, replied)
+  def build_notes(existing_notes, viability_reason, extra_notes, replied)
     parts = [ existing_notes, viability_reason, extra_notes ].select(&:present?)
-    parts << "LinkedIn message sent#{" " + message_sent_date.to_date.to_s if message_sent_date}" if message_sent
     parts << "Replied" if replied
     parts.join("\n").presence
   end

@@ -79,6 +79,17 @@ class Contact < ApplicationRecord
       email_followup_due_at <= Time.current
   end
 
+  # Short status line for the pipeline list/table views: once the email is
+  # sent, show when -- "Follow-up due" only ever applies to a not-yet-sent,
+  # actually-overdue contact, not a generic upcoming date.
+  def followup_status_text
+    if sent?
+      email_sent_at.present? ? "Followed up on #{email_sent_at.to_date.to_fs(:long)}" : "Followed up"
+    elsif followup_overdue?
+      "Follow-up due #{email_followup_due_at.to_date.to_fs(:long)}"
+    end
+  end
+
   def mark_linkedin_outreached!
     update!(linkedin_outreached_at: Time.current, email_followup_due_at: 1.week.from_now)
   end

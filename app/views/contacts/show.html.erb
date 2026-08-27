@@ -30,7 +30,9 @@
 
   <div class="mt-4 bg-white border border-slate-200 rounded-lg p-6 text-sm space-y-2">
     <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">LinkedIn outreached</dt><dd><%= @contact.linkedin_outreached_at&.to_fs(:long) || "Not yet" %></dd></div>
-    <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">Email follow-up due</dt><dd><%= @contact.email_followup_due_at&.to_fs(:long) || "—" %></dd></div>
+    <% if @contact.followup_status_text.present? %>
+      <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500"><%= @contact.sent? ? "Follow-up" : "Follow-up due" %></dt><dd><%= @contact.followup_status_text %></dd></div>
+    <% end %>
     <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">Email status</dt><dd><%= @contact.email_status.capitalize %></dd></div>
     <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">Source</dt><dd><%= @contact.source.presence || "—" %></dd></div>
     <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">Import batch</dt><dd class="font-mono text-xs text-slate-500"><%= @contact.import_batch_id.presence || "—" %></dd></div>
