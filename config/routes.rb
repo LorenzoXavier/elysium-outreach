@@ -24,5 +24,9 @@ Rails.application.routes.draw do
       patch :update_email
       post :publish_email
     end
+
+    collection do
+      post :bulk_mark_linkedin_outreached
+    end
   end
 end

@@ -1,9 +1,11 @@
-<div class="inline-flex rounded-md border border-slate-200 overflow-hidden text-xs font-medium">
-  <% [["green", "Green", "hover:bg-emerald-50"], ["amber", "Amber", "hover:bg-amber-50"], ["red", "Red", "hover:bg-red-50"]].each do |value, label, hover| %>
-    <%= button_to update_priority_contact_path(contact, priority_status: value),
-          method: :patch,
-          class: "px-2.5 py-1 #{hover} #{'font-bold underline' if contact.priority_status == value} #{'border-l border-slate-200' unless value == 'green'}" do %>
-      <%= label %>
-    <% end %>
+<%
+  levels = [["green", "High", "text-emerald-600"], ["amber", "Medium", "text-amber-600"], ["red", "Low", "text-red-600"]]
+%>
+<div class="inline-flex items-center gap-2 text-xs">
+  <span class="text-slate-400">Priority:</span>
+  <% levels.each do |value, label, color| %>
+    <%= link_to label, update_priority_contact_path(contact, priority_status: value),
+          data: { turbo_method: :patch },
+          class: contact.priority_status == value ? "font-semibold #{color}" : "text-slate-400 hover:text-slate-600" %>
   <% end %>
 </div>

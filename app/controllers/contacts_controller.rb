@@ -1,5 +1,5 @@
 class ContactsController < ApplicationController
-  before_action :set_contact
+  before_action :set_contact, except: [:bulk_mark_linkedin_outreached]
 
   def show
   end
@@ -23,6 +23,17 @@ class ContactsController < ApplicationController
   def mark_linkedin_outreached
     @contact.mark_linkedin_outreached!
     redirect_back fallback_location: root_path, notice: "LinkedIn outreach recorded for #{@contact.display_name}."
+  end
+
+  def bulk_mark_linkedin_outreached
+    contacts = Contact.where(id: params[:contact_ids])
+
+    if contacts.none?
+      redirect_back fallback_location: root_path, alert: "No contacts selected." and return
+    end
+
+    contacts.find_each(&:mark_linkedin_outreached!)
+    redirect_back fallback_location: root_path, notice: "LinkedIn outreach recorded for #{contacts.size} contact(s)."
   end
 
   def edit_email

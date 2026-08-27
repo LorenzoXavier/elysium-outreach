@@ -1,0 +1,30 @@
+<% if pagy.pages > 1 %>
+  <div class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500">
+    <span>Showing <%= pagy.from %>&ndash;<%= pagy.to %> of <%= pagy.count %></span>
+
+    <div class="flex items-center gap-3">
+      <% if pagy.previous %>
+        <%= link_to "Previous", page_url.call(pagy.previous), class: "text-slate-600 hover:text-slate-900 hover:underline" %>
+      <% else %>
+        <span class="text-slate-300">Previous</span>
+      <% end %>
+
+      <label class="flex items-center gap-1.5">
+        Page
+        <select data-controller="navigate-select" data-action="change->navigate-select#go"
+                class="rounded-md border border-slate-300 text-sm px-2 py-1">
+          <% (1..pagy.pages).each do |n| %>
+            <option value="<%= page_url.call(n) %>" <%= "selected" if n == pagy.page %>><%= n %></option>
+          <% end %>
+        </select>
+        of <%= pagy.pages %>
+      </label>
+
+      <% if pagy.next %>
+        <%= link_to "Next", page_url.call(pagy.next), class: "text-slate-600 hover:text-slate-900 hover:underline" %>
+      <% else %>
+        <span class="text-slate-300">Next</span>
+      <% end %>
+    </div>
+  </div>
+<% end %>
