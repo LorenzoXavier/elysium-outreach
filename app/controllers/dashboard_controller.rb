@@ -5,7 +5,7 @@ class DashboardController < ApplicationController
 
     scope = Contact.apply_filters(base, @filters)
                    .order(Arel.sql("CASE priority_status WHEN 'green' THEN 0 WHEN 'amber' THEN 1 ELSE 2 END"))
-                   .order(updated_at: :desc)
+                   .order(created_at: :asc)
 
     @pagy, @contacts = pagy(scope)
   end

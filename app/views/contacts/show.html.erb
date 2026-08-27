@@ -7,8 +7,14 @@
       <%= render "contacts/priority_badge", contact: @contact %>
     </div>
     <div class="flex items-center gap-2">
+      <% if @contact.linkedin_outreached_at.blank? %>
+        <%= link_to "Mark LinkedIn Outreached", mark_linkedin_outreached_contact_path(@contact),
+              data: { turbo_method: :patch, turbo_confirm: "Mark #{@contact.display_name} as LinkedIn outreached? This records today's date and sets the email follow-up due in 1 week." },
+              class: "rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
+      <% end %>
       <%= link_to "Edit details", edit_contact_path(@contact), class: "rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
-      <%= link_to "Edit email", edit_email_contact_path(@contact), class: "rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700" %>
+      <%= link_to "Edit email", edit_email_contact_path(@contact), class: "rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
+      <%= link_to "Schedule Email", new_scheduled_email_contact_path(@contact), class: "rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700" %>
     </div>
   </div>
 
@@ -24,7 +30,9 @@
 
   <div class="mt-4 bg-white border border-slate-200 rounded-lg p-6 text-sm space-y-2">
     <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">LinkedIn outreached</dt><dd><%= @contact.linkedin_outreached_at&.to_fs(:long) || "Not yet" %></dd></div>
-    <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">Email follow-up due</dt><dd><%= @contact.email_followup_due_at&.to_fs(:long) || "—" %></dd></div>
+    <% if @contact.followup_status_text.present? %>
+      <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500"><%= @contact.sent? ? "Follow-up" : "Follow-up due" %></dt><dd><%= @contact.followup_status_text %></dd></div>
+    <% end %>
     <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">Email status</dt><dd><%= @contact.email_status.capitalize %></dd></div>
     <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">Source</dt><dd><%= @contact.source.presence || "—" %></dd></div>
     <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">Import batch</dt><dd class="font-mono text-xs text-slate-500"><%= @contact.import_batch_id.presence || "—" %></dd></div>
@@ -36,4 +44,34 @@
   <div class="mt-6">
     <%= render "contacts/priority_toggle", contact: @contact %>
   </div>
+
+  <% scheduled = @contact.scheduled_emails.order(scheduled_at: :desc) %>
+  <% if scheduled.any? %>
+    <div class="mt-6">
+      <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">Scheduled Emails</p>
+      <div class="space-y-2">
+        <% scheduled.each do |scheduled_email| %>
+          <div class="bg-white border border-slate-200 rounded-lg p-3 flex items-center justify-between gap-3 text-sm">
+            <div class="min-w-0">
+              <p class="font-medium text-slate-900 truncate"><%= scheduled_email.subject %></p>
+              <p class="text-xs text-slate-500">
+                <%= scheduled_email.status.capitalize %>
+                &middot;
+                <% if scheduled_email.sent_at %>
+                  sent <%= scheduled_email.sent_at.to_fs(:long) %>
+                <% else %>
+                  scheduled for <%= scheduled_email.scheduled_at.to_fs(:long) %>
+                <% end %>
+              </p>
+            </div>
+            <% if scheduled_email.scheduled? %>
+              <%= button_to "Cancel", cancel_scheduled_email_path(scheduled_email), method: :post,
+                    data: { turbo_confirm: "Cancel this scheduled email?" },
+                    class: "shrink-0 rounded-md border border-red-200 px-2.5 py-1 text-xs font-semibold text-red-600 hover:bg-red-50" %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 </div>

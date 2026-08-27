@@ -40,10 +40,22 @@ Rails.application.configure do
   # Set localhost to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
 
-  # Deliver via real SMTP when credentials are present (see .env.example);
-  # otherwise fall back to :test so sends are captured in ActionMailer::Base.deliveries
-  # instead of trying (and failing) to reach a real SMTP server.
-  if ENV["SMTP_ADDRESS"].present?
+  # Real SMTP credentials, preferring Gmail (GMAIL_USERNAME/GMAIL_PASSWORD) over the
+  # generic SMTP_* vars if both happen to be set. These are the settings used when the
+  # dev mail toggle (see config/initializers/development_mail_interceptor.rb) is ON;
+  # when it's OFF, the interceptor reroutes delivery to local Mailpit regardless.
+  if ENV["GMAIL_USERNAME"].present?
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+      address: "smtp.gmail.com",
+      port: 587,
+      domain: "gmail.com",
+      user_name: ENV["GMAIL_USERNAME"],
+      password: ENV["GMAIL_PASSWORD"],
+      authentication: "plain",
+      enable_starttls_auto: true
+    }
+  elsif ENV["SMTP_ADDRESS"].present?
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
       address: ENV["SMTP_ADDRESS"],
@@ -55,8 +67,18 @@ Rails.application.configure do
       enable_starttls_auto: true
     }
   else
-    config.action_mailer.delivery_method = :test
+    # No real credentials configured at all -- the dev mail toggle has nothing to turn
+    # "on", but Mailpit still receives everything via the interceptor's forced :smtp.
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = { address: "localhost", port: 1025 }
   end
+
+  # Replace the default in-process queuing backend for Active Job so `wait_until:`
+  # scheduling survives server restarts (see db/queue_schema.rb / config/queue.yml).
+  # Run `bin/jobs` (or `bin/dev`, which now includes it) alongside the server for
+  # scheduled jobs to actually fire.
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

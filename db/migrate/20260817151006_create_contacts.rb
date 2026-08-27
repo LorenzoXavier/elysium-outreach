@@ -36,7 +36,7 @@ class CreateContacts < ActiveRecord::Migration[8.1]
 
     add_index :contacts, :email
     add_index :contacts, :linkedin_url
-    add_index :contacts, [:full_name, :company]
+    add_index :contacts, [ :full_name, :company ]
     add_index :contacts, :priority_status
     add_index :contacts, :duplicate_status
     add_index :contacts, :import_batch_id

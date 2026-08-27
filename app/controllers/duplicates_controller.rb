@@ -1,5 +1,5 @@
 class DuplicatesController < ApplicationController
-  before_action :set_contact, only: [:confirm, :mark_unique]
+  before_action :set_contact, only: [ :confirm, :mark_unique ]
 
   def index
     @duplicates = Contact.potential_duplicate.includes(:matched_contact).order(created_at: :desc)
