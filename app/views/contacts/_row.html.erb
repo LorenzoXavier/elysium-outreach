@@ -1,7 +1,8 @@
 <div id="<%= dom_id(contact) %>" class="bg-white border rounded-lg p-4 flex items-start gap-4 <%= contact.followup_overdue? ? 'border-red-300 ring-1 ring-red-200' : 'border-slate-200' %>">
   <% if local_assigns[:selectable] %>
     <input type="checkbox" name="contact_ids[]" value="<%= contact.id %>"
-           data-bulk-select-target="checkbox" data-action="change->bulk-select#refresh"
+           data-bulk-select-target="checkbox" data-contact-id="<%= contact.id %>"
+           data-action="change->bulk-select#sync"
            class="mt-1.5 h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-500 shrink-0">
   <% end %>
 

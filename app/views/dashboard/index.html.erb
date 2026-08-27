@@ -15,7 +15,7 @@
 <%= render "filter_bar", filters: @filters %>
 
 <% if @contacts.any? %>
-  <div data-controller="bulk-select">
+  <div data-controller="bulk-select view-toggle">
     <%= form_with url: bulk_mark_linkedin_outreached_contacts_path, method: :post do %>
       <div class="mb-3 flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-2.5">
         <label class="flex items-center gap-2 text-sm text-slate-600">
@@ -24,24 +24,41 @@
           Select all on this page
         </label>
 
-        <div class="relative" data-controller="dropdown">
-          <button type="button" data-bulk-select-target="menuButton"
-                  data-action="dropdown#toggle" disabled
-                  class="rounded-md border border-slate-300 px-2.5 py-1 text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent">
-            &hellip;
-          </button>
-          <div data-dropdown-target="menu" class="hidden absolute right-0 z-10 mt-1 w-56 rounded-md border border-slate-200 bg-white py-1 shadow-lg">
-            <button type="submit" data-bulk-select-target="submitButton"
-                    data-turbo-confirm="Mark the selected contacts as LinkedIn outreached? This records today's date and sets each one's email follow-up due in 1 week."
-                    class="block w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50">
-              Mark as LinkedIn Outreached
+        <div class="flex items-center gap-3">
+          <div class="inline-flex rounded-md border border-slate-300 overflow-hidden text-xs font-medium">
+            <button type="button" data-view-toggle-target="cardButton" data-action="view-toggle#showCards"
+                    class="px-2.5 py-1 text-slate-600 hover:bg-slate-50">
+              Cards
             </button>
+            <button type="button" data-view-toggle-target="tableButton" data-action="view-toggle#showTable"
+                    class="px-2.5 py-1 border-l border-slate-300 text-slate-600 hover:bg-slate-50">
+              Table
+            </button>
+          </div>
+
+          <div class="relative" data-controller="dropdown">
+            <button type="button" data-bulk-select-target="menuButton"
+                    data-action="dropdown#toggle" disabled
+                    class="rounded-md border border-slate-300 px-2.5 py-1 text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent">
+              &hellip;
+            </button>
+            <div data-dropdown-target="menu" class="hidden absolute right-0 z-10 mt-1 w-56 rounded-md border border-slate-200 bg-white py-1 shadow-lg">
+              <button type="submit" data-bulk-select-target="submitButton"
+                      data-turbo-confirm="Mark the selected contacts as LinkedIn outreached? This records today's date and sets each one's email follow-up due in 1 week."
+                      class="block w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-slate-50">
+                Mark as LinkedIn Outreached
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="space-y-3">
+      <div data-view-toggle-target="cardView" class="space-y-3">
         <%= render partial: "contacts/row", collection: @contacts, as: :contact, locals: { selectable: true } %>
+      </div>
+
+      <div data-view-toggle-target="tableView" class="hidden">
+        <%= render "contacts/table", contacts: @contacts, selectable: true %>
       </div>
     <% end %>
   </div>
