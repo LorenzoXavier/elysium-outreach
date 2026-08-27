@@ -1,0 +1,21 @@
+<% if Rails.env.development? %>
+  <% real_on = RealEmailToggle.enabled? %>
+  <div class="<%= real_on ? "bg-red-600" : "bg-emerald-600" %> text-white text-sm">
+    <div class="max-w-6xl mx-auto px-6 py-2 flex items-center justify-between gap-4">
+      <span>
+        <strong>Dev mail:</strong>
+        <% if real_on %>
+          Real emails are <strong>ON</strong> &mdash; sending via configured SMTP.
+        <% else %>
+          Real emails are <strong>OFF</strong> &mdash; everything is routed to local Mailpit (<code>localhost:1025</code>).
+        <% end %>
+      </span>
+      <div class="flex items-center gap-2 shrink-0">
+        <%= link_to "Open Mailpit ↗", "http://localhost:8025", target: "_blank", rel: "noopener",
+              class: "rounded-md bg-white/20 px-3 py-1 text-xs font-semibold hover:bg-white/30" %>
+        <%= button_to real_on ? "Turn off" : "Turn on", dev_mail_toggle_path, method: :post,
+              class: "rounded-md bg-white/20 px-3 py-1 text-xs font-semibold hover:bg-white/30" %>
+      </div>
+    </div>
+  </div>
+<% end %>

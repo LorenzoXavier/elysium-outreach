@@ -157,7 +157,7 @@ class CsvImporterService
   end
 
   def build_notes(existing_notes, viability_reason, extra_notes, message_sent, message_sent_date, replied)
-    parts = [existing_notes, viability_reason, extra_notes].select(&:present?)
+    parts = [ existing_notes, viability_reason, extra_notes ].select(&:present?)
     parts << "LinkedIn message sent#{" " + message_sent_date.to_date.to_s if message_sent_date}" if message_sent
     parts << "Replied" if replied
     parts.join("\n").presence
@@ -225,13 +225,13 @@ class CsvImporterService
 
   # "Yes - a fintech platform..." / "No" / "Maybe - out of speciality" -> priority + freeform reason.
   def parse_viability(value)
-    return [nil, nil] if value.blank?
+    return [ nil, nil ] if value.blank?
 
     match = value.match(/\A\s*(yes|no|maybe)\b\s*-?\s*(.*)\z/mi)
-    return [nil, value] unless match
+    return [ nil, value ] unless match
 
     priority = { "yes" => "green", "maybe" => "amber", "no" => "red" }[match[1].downcase]
-    [priority, match[2].to_s.strip.presence]
+    [ priority, match[2].to_s.strip.presence ]
   end
 
   def truthy?(value)

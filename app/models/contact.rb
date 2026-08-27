@@ -2,6 +2,7 @@ class Contact < ApplicationRecord
   belongs_to :matched_contact, class_name: "Contact", optional: true
   has_many :duplicate_candidates, class_name: "Contact", foreign_key: :matched_contact_id,
            inverse_of: :matched_contact, dependent: :nullify
+  has_many :scheduled_emails, dependent: :destroy
 
   enum :priority_status, { green: "green", amber: "amber", red: "red" }, default: "amber", validate: true
   enum :email_status, { pending: "pending", drafted: "drafted", sent: "sent" }, default: "pending", validate: true
@@ -64,7 +65,7 @@ class Contact < ApplicationRecord
   end
 
   def display_name
-    full_name.presence || [first_name, last_name].compact_blank.join(" ").presence || email.presence || "(no name)"
+    full_name.presence || [ first_name, last_name ].compact_blank.join(" ").presence || email.presence || "(no name)"
   end
 
   def priority_label
@@ -85,6 +86,6 @@ class Contact < ApplicationRecord
   private
 
   def sync_full_name
-    self.full_name = full_name.presence || [first_name, last_name].compact_blank.join(" ").presence
+    self.full_name = full_name.presence || [ first_name, last_name ].compact_blank.join(" ").presence
   end
 end

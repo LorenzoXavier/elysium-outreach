@@ -1,0 +1,77 @@
+<%= form_with model: @contact, class: "space-y-4" do |f| %>
+  <% if @contact.errors.any? %>
+    <div class="rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
+      <%= @contact.errors.full_messages.to_sentence %>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <%= f.label :first_name, class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= f.text_field :first_name, class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= f.label :last_name, class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= f.text_field :last_name, class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :full_name, "Full name (overrides first/last if set)", class: "block text-sm font-medium text-slate-700 mb-1" %>
+    <%= f.text_field :full_name, class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <%= f.label :company, class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= f.text_field :company, class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= f.label :title, "Job title", class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= f.text_field :title, class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <%= f.label :email, class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= f.email_field :email, class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= f.label :phone, class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= f.text_field :phone, class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :linkedin_url, "LinkedIn URL", class: "block text-sm font-medium text-slate-700 mb-1" %>
+    <%= f.text_field :linkedin_url, class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <%= f.label :website, class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= f.text_field :website, class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+    <div>
+      <%= f.label :location, class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= f.text_field :location, class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :source, class: "block text-sm font-medium text-slate-700 mb-1" %>
+    <%= f.text_field :source, class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+  </div>
+
+  <div>
+    <%= f.label :notes, class: "block text-sm font-medium text-slate-700 mb-1" %>
+    <%= f.text_area :notes, rows: 4, class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <%= f.submit (@contact.persisted? ? "Save changes" : "Add Lead"),
+          class: "rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 cursor-pointer" %>
+    <%= link_to "Cancel", (@contact.persisted? ? @contact : root_path), class: "text-sm text-slate-500 hover:underline" %>
+  </div>
+<% end %>

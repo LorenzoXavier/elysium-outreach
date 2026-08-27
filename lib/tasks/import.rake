@@ -1,9 +1,9 @@
 namespace :import do
   desc "Import CRM CSV export(s) via CsvImporterService. Usage: rake import:crm_data[path/to/file.csv]"
-  task :crm_data, [:path] => :environment do |_t, args|
+  task :crm_data, [ :path ] => :environment do |_t, args|
     files =
       if args[:path]
-        [args[:path]]
+        [ args[:path] ]
       else
         Dir.glob(Rails.root.join("db", "seed_data", "*.csv"))
       end

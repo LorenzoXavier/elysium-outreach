@@ -1,0 +1,55 @@
+<div data-controller="ai-assistant" class="max-w-2xl">
+  <%= form_with model: @email_template, class: "space-y-4" do |f| %>
+    <% if @email_template.errors.any? %>
+      <div class="rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
+        <%= @email_template.errors.full_messages.to_sentence %>
+      </div>
+    <% end %>
+
+    <div>
+      <%= f.label :name, class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= f.text_field :name, class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+
+    <div>
+      <%= f.label :subject, class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= f.text_field :subject, id: "email_template_subject", data: { "ai-assistant-target": "subjectField" },
+            class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+
+    <div>
+      <%= f.label :body, class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= f.text_area :body, rows: 8, id: "email_template_body", data: { "ai-assistant-target": "bodyField" },
+            class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm font-mono" %>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <%= f.submit(@email_template.persisted? ? "Save changes" : "Create template",
+            class: "rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 cursor-pointer") %>
+      <%= link_to "Cancel", (@email_template.persisted? ? @email_template : email_templates_path), class: "text-sm text-slate-500 hover:underline" %>
+    </div>
+  <% end %>
+
+  <div class="mt-8 rounded-lg border border-slate-200 bg-slate-50 p-4">
+    <p class="text-sm font-semibold text-slate-700 mb-2">AI Assistant <span class="font-normal text-slate-400">(Gemini)</span></p>
+    <p class="text-xs text-slate-500 mb-3">
+      Describe what you want -- it can see your current subject/body as context. Review the suggestion
+      before applying it; nothing here overwrites your draft automatically.
+    </p>
+
+    <%= form_with url: ai_draft_email_templates_path, method: :post, data: { action: "submit->ai-assistant#syncContext" } do %>
+      <input type="hidden" name="current_subject" data-ai-assistant-target="contextSubject">
+      <input type="hidden" name="current_body" data-ai-assistant-target="contextBody">
+
+      <div class="flex gap-2">
+        <input type="text" name="prompt" required
+               placeholder="e.g. Write a friendly follow-up mentioning our demo call"
+               class="flex-1 rounded-md border border-slate-300 px-3 py-2 text-sm">
+        <%= submit_tag "Generate", data: { turbo_submits_with: "Generating…" },
+              class: "rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 cursor-pointer" %>
+      </div>
+    <% end %>
+
+    <%= render "email_templates/ai_suggestion_drawer", result: nil %>
+  </div>
+</div>

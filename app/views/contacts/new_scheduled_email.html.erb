@@ -1,0 +1,63 @@
+<% content_for :title, "Schedule Email — #{@contact.display_name}" %>
+
+<div class="max-w-2xl" data-controller="email-composer">
+  <h1 class="text-2xl font-bold text-slate-900 mb-1">Compose &amp; Schedule Email</h1>
+  <p class="text-sm text-slate-500 mb-6">
+    To: <span class="font-medium text-slate-700"><%= @contact.email.presence || "No email address on file" %></span>
+    (<%= link_to @contact.display_name, @contact, class: "text-blue-600 hover:underline" %>)
+  </p>
+
+  <% if @scheduled_email.errors.any? %>
+    <div class="mb-4 rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
+      <%= @scheduled_email.errors.full_messages.to_sentence %>
+    </div>
+  <% end %>
+
+  <%= form_with model: @scheduled_email, url: schedule_email_contact_path(@contact),
+        data: { action: "submit->email-composer#syncScheduledAt" }, class: "space-y-4" do |f| %>
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1">Start from a template (optional)</label>
+      <select data-email-composer-target="templateSelect" data-action="change->email-composer#applyTemplate"
+              class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm">
+        <option value="">Custom email&hellip;</option>
+        <% @email_templates.each do |template| %>
+          <option value="<%= template.id %>" data-subject="<%= template.subject %>" data-body="<%= template.body %>">
+            <%= template.name %>
+          </option>
+        <% end %>
+      </select>
+      <%= f.hidden_field :email_template_id, data: { "email-composer-target": "templateId" } %>
+    </div>
+
+    <div>
+      <%= f.label :subject, class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= f.text_field :subject, data: { "email-composer-target": "subjectField" },
+            class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm" %>
+    </div>
+
+    <div>
+      <%= f.label :body, class: "block text-sm font-medium text-slate-700 mb-1" %>
+      <%= f.text_area :body, rows: 10, data: { "email-composer-target": "bodyField" },
+            class: "w-full rounded-md border border-slate-300 px-3 py-2 text-sm font-mono" %>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1">Deliver at</label>
+      <input type="datetime-local" required data-email-composer-target="localScheduledAt"
+             data-action="change->email-composer#syncScheduledAt"
+             min="<%= 5.minutes.from_now.strftime("%Y-%m-%dT%H:%M") %>"
+             class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm">
+      <%= f.hidden_field :scheduled_at, data: { "email-composer-target": "scheduledAt" } %>
+      <p class="mt-1 text-xs text-slate-400">Interpreted in your browser's local time zone.</p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <%= f.submit "Schedule Email",
+            class: "rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 cursor-pointer" %>
+      <%= submit_tag "Send Now", formaction: send_email_now_contact_path(@contact), formnovalidate: true,
+            data: { turbo_confirm: "Send this email to #{@contact.display_name} right now, instead of scheduling it?" },
+            class: "rounded-md bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-500 cursor-pointer" %>
+      <%= link_to "Cancel", @contact, class: "text-sm text-slate-500 hover:underline" %>
+    </div>
+  <% end %>
+</div>
