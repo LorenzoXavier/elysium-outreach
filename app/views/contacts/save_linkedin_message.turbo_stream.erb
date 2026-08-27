@@ -1,0 +1,15 @@
+<%= turbo_stream.update "modal", "" %>
+<%= turbo_stream.replace "linkedin_message_trigger_#{@contact.id}" do %>
+  <%= render "contacts/linkedin_message_trigger", contact: @contact %>
+<% end %>
+<%= turbo_stream.replace "linkedin_message_display_#{@contact.id}" do %>
+  <%= render "contacts/linkedin_message_display", contact: @contact %>
+<% end %>
+<%= turbo_stream.replace "linkedin_outreach_details_#{@contact.id}" do %>
+  <div id="linkedin_outreach_details_<%= @contact.id %>" class="space-y-2">
+    <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">LinkedIn outreached</dt><dd><%= @contact.linkedin_outreached_at&.to_fs(:long) || "Not yet" %></dd></div>
+    <% if @contact.followup_status_text.present? %>
+      <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500"><%= @contact.sent? ? "Follow-up" : "Follow-up due" %></dt><dd><%= @contact.followup_status_text %></dd></div>
+    <% end %>
+  </div>
+<% end %>

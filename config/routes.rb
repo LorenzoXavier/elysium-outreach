@@ -43,6 +43,10 @@ Rails.application.routes.draw do
       get :new_scheduled_email
       post :schedule_email
       post :send_email_now
+
+      get :new_linkedin_message
+      post :generate_linkedin_message
+      post :save_linkedin_message
     end
 
     collection do

@@ -1,0 +1,19 @@
+<div id="linkedin_message_preview" data-linkedin-message-target="previewContainer">
+  <% if result.nil? %>
+    <p class="text-xs text-slate-400 italic">Generated message will appear here -- nothing is applied until you click "Apply Suggestion".</p>
+  <% elsif !result.success? %>
+    <div class="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+      <%= result.error %>
+    </div>
+  <% else %>
+    <div class="rounded-md border border-indigo-200 bg-indigo-50 p-3 space-y-2">
+      <p class="text-xs font-semibold uppercase tracking-wide text-indigo-700">Suggestion (not applied yet)</p>
+      <p class="text-sm text-slate-900 bg-white rounded border border-indigo-100 px-2 py-1 whitespace-pre-wrap"
+         data-linkedin-message-target="suggestion"><%= result.message %></p>
+      <button type="button" data-action="linkedin-message#apply"
+              class="rounded-md bg-indigo-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-indigo-500">
+        Apply Suggestion
+      </button>
+    </div>
+  <% end %>
+</div>

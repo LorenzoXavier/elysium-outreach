@@ -1,0 +1,12 @@
+<span id="linkedin_message_trigger_<%= contact.id %>">
+  <% unless contact.linkedin_outreached? %>
+    <div class="inline-flex flex-wrap items-center gap-2">
+      <%= link_to "Mark LinkedIn Outreached", mark_linkedin_outreached_contact_path(contact),
+            data: { turbo_method: :patch, turbo_confirm: "Mark #{contact.display_name} as LinkedIn outreached? This records today's date and sets the email follow-up due in 1 week." },
+            class: "shrink-0 whitespace-nowrap rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
+      <%= link_to "Draft LinkedIn Message", new_linkedin_message_contact_path(contact),
+            data: { turbo_frame: "modal" },
+            class: "shrink-0 whitespace-nowrap rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700" %>
+    </div>
+  <% end %>
+</span>

@@ -6,15 +6,11 @@
       <h1 class="text-2xl font-bold text-slate-900"><%= @contact.display_name %></h1>
       <%= render "contacts/priority_badge", contact: @contact %>
     </div>
-    <div class="flex items-center gap-2">
-      <% if @contact.linkedin_outreached_at.blank? %>
-        <%= link_to "Mark LinkedIn Outreached", mark_linkedin_outreached_contact_path(@contact),
-              data: { turbo_method: :patch, turbo_confirm: "Mark #{@contact.display_name} as LinkedIn outreached? This records today's date and sets the email follow-up due in 1 week." },
-              class: "rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
-      <% end %>
-      <%= link_to "Edit details", edit_contact_path(@contact), class: "rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
-      <%= link_to "Edit email", edit_email_contact_path(@contact), class: "rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
-      <%= link_to "Schedule Email", new_scheduled_email_contact_path(@contact), class: "rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700" %>
+    <div class="flex flex-wrap items-center justify-end gap-2">
+      <%= render "contacts/linkedin_message_trigger", contact: @contact %>
+      <%= link_to "Edit details", edit_contact_path(@contact), class: "shrink-0 whitespace-nowrap rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
+      <%= link_to "Edit email", edit_email_contact_path(@contact), class: "shrink-0 whitespace-nowrap rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50" %>
+      <%= link_to "Schedule Email", new_scheduled_email_contact_path(@contact), class: "shrink-0 whitespace-nowrap rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700" %>
     </div>
   </div>
 
@@ -29,10 +25,12 @@
   </div>
 
   <div class="mt-4 bg-white border border-slate-200 rounded-lg p-6 text-sm space-y-2">
-    <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">LinkedIn outreached</dt><dd><%= @contact.linkedin_outreached_at&.to_fs(:long) || "Not yet" %></dd></div>
-    <% if @contact.followup_status_text.present? %>
-      <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500"><%= @contact.sent? ? "Follow-up" : "Follow-up due" %></dt><dd><%= @contact.followup_status_text %></dd></div>
-    <% end %>
+    <div id="linkedin_outreach_details_<%= @contact.id %>" class="space-y-2">
+      <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">LinkedIn outreached</dt><dd><%= @contact.linkedin_outreached_at&.to_fs(:long) || "Not yet" %></dd></div>
+      <% if @contact.followup_status_text.present? %>
+        <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500"><%= @contact.sent? ? "Follow-up" : "Follow-up due" %></dt><dd><%= @contact.followup_status_text %></dd></div>
+      <% end %>
+    </div>
     <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">Email status</dt><dd><%= @contact.email_status.capitalize %></dd></div>
     <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">Source</dt><dd><%= @contact.source.presence || "—" %></dd></div>
     <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">Import batch</dt><dd class="font-mono text-xs text-slate-500"><%= @contact.import_batch_id.presence || "—" %></dd></div>
@@ -40,6 +38,8 @@
       <div class="flex gap-2"><dt class="w-40 shrink-0 text-slate-500">Notes</dt><dd><%= @contact.notes %></dd></div>
     <% end %>
   </div>
+
+  <%= render "contacts/linkedin_message_display", contact: @contact %>
 
   <div class="mt-6">
     <%= render "contacts/priority_toggle", contact: @contact %>

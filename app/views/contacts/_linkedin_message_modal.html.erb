@@ -1,0 +1,36 @@
+<turbo-frame id="modal">
+  <div class="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/40 p-4" data-controller="linkedin-message">
+    <div class="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-lg bg-white shadow-xl">
+      <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+        <h2 class="text-lg font-semibold text-slate-900">Draft LinkedIn Message &mdash; <%= contact.display_name %></h2>
+        <button type="button" data-action="linkedin-message#close"
+                class="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>
+      </div>
+
+      <div class="p-5 space-y-5">
+        <%= form_with url: generate_linkedin_message_contact_path(contact), method: :post, class: "space-y-2" do %>
+          <label class="block text-sm font-medium text-slate-700">Prompt</label>
+          <textarea name="prompt" rows="6" data-linkedin-message-target="prompt"
+                    class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"><%= linkedin_prompt %></textarea>
+          <%= submit_tag "Generate with Gemini", data: { turbo_submits_with: "Generating…" },
+                class: "rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 cursor-pointer" %>
+        <% end %>
+
+        <%= render "contacts/linkedin_message_preview", result: nil %>
+
+        <%= form_with url: save_linkedin_message_contact_path(contact), method: :post,
+              class: "space-y-2 border-t border-slate-200 pt-4" do %>
+          <label class="block text-sm font-medium text-slate-700">LinkedIn Message</label>
+          <textarea name="linkedin_message" rows="6" data-linkedin-message-target="message"
+                    class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"><%= contact.linkedin_message %></textarea>
+          <div class="flex items-center gap-3 pt-1">
+            <%= submit_tag "Save & Mark Outreach Complete",
+                  class: "rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 cursor-pointer" %>
+            <button type="button" data-action="linkedin-message#close"
+                    class="text-sm text-slate-500 hover:underline">Cancel</button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</turbo-frame>
