@@ -52,26 +52,6 @@ class ContactsController < ApplicationController
     redirect_back fallback_location: root_path, notice: "LinkedIn outreach recorded for #{contacts.size} contact(s)."
   end
 
-  def edit_email
-  end
-
-  def update_email
-    @contact.update!(email_body: params[:contact][:email_body], email_status: :drafted)
-    redirect_to edit_email_contact_path(@contact), notice: "Draft saved."
-  end
-
-  def publish_email
-    if @contact.email.blank?
-      redirect_to edit_email_contact_path(@contact), alert: "This contact has no email address on file." and return
-    end
-
-    @contact.update!(email_body: params.dig(:contact, :email_body) || @contact.email_body)
-    OutreachMailer.outreach_email(@contact).deliver_later
-    @contact.update!(email_status: :sent, email_sent_at: Time.current)
-
-    redirect_to root_path, notice: "Email sent to #{@contact.display_name}."
-  end
-
   # Composer: pick a template (client-side prefill, see email_composer_controller.js)
   # or write custom subject/body, then choose a future date/time to schedule delivery.
   def new_scheduled_email
