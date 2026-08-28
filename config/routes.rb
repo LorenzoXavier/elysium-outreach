@@ -36,9 +36,6 @@ Rails.application.routes.draw do
     member do
       patch :update_priority
       patch :mark_linkedin_outreached
-      get :edit_email
-      patch :update_email
-      post :publish_email
 
       get :new_scheduled_email
       post :schedule_email

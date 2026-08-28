@@ -20,9 +20,17 @@
 
         <%= form_with url: save_linkedin_message_contact_path(contact), method: :post,
               class: "space-y-2 border-t border-slate-200 pt-4" do %>
-          <label class="block text-sm font-medium text-slate-700">LinkedIn Message</label>
-          <textarea name="linkedin_message" rows="6" data-linkedin-message-target="message"
-                    class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"><%= contact.linkedin_message %></textarea>
+          <div data-controller="clipboard" class="space-y-1">
+            <div class="flex items-center justify-between">
+              <label class="block text-sm font-medium text-slate-700">LinkedIn Message</label>
+              <button type="button" data-clipboard-target="button" data-action="clipboard#copy"
+                      class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
+                Copy
+              </button>
+            </div>
+            <textarea name="linkedin_message" rows="6" data-linkedin-message-target="message" data-clipboard-target="source"
+                      class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm"><%= contact.linkedin_message %></textarea>
+          </div>
           <div class="flex items-center gap-3 pt-1">
             <%= submit_tag "Save & Mark Outreach Complete",
                   class: "rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 cursor-pointer" %>
